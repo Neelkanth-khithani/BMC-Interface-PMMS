@@ -7,7 +7,7 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 import Monitor from "./components/Monitor";
-
+import Map from "./components/Map";
 function App() {
   return (
     <Routes>
@@ -18,6 +18,7 @@ function App() {
       <Route path="/dashboard/:constituency" element={<Dashboard />}>
         <Route path="profile" element={<Profile />} />
         <Route path="monitor" element={<Monitor />} />
+        <Route path="map" element={<Map />} />
       </Route>
     </Routes>
   );

@@ -20,7 +20,7 @@ function Sidebar() {
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <Link to="/map" className="nav-link fw-bold">
+                    <Link to={`/dashboard/${constituency}/map`} className="nav-link fw-bold">
                         Map View
                     </Link>
                 </li>
