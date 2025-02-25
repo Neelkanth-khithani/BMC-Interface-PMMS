@@ -11,11 +11,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-const locations = [
-    { lat: 19.0587, lng: 72.8997, name: 'Chembur Railway Station' },
-    { lat: 19.0660, lng: 72.8885, name: 'Amchi Shala' },
-    { lat: 19.0718, lng: 72.8879, name: 'Kalachauki, Mahul' },
-  ];
+
 
   const Map = () => {
     const [position, setPosition] = useState(null);
@@ -96,11 +92,7 @@ const locations = [
                   <Popup>You are here!</Popup>
                 </Marker>
               )}
-              {locations.map((location, index) => (
-                <Marker key={index} position={[location.lat, location.lng]}>
-                  <Popup>{location.name}</Popup>
-                </Marker>
-              ))}
+             
               {/* Draw the polyline only if data is available */}
               {polylineData.length > 0 && (
                 <Polyline positions={polylineData} color="blue" />
