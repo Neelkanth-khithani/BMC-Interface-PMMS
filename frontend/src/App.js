@@ -8,6 +8,8 @@ import Dashboard from "./components/Dashboard";
 import Profile from "./components/Profile";
 import Monitor from "./components/Monitor";
 import Map from "./components/Map";
+import Report from "./components/Report";
+
 function App() {
   return (
     <Routes>
@@ -19,6 +21,7 @@ function App() {
         <Route path="profile" element={<Profile />} />
         <Route path="monitor" element={<Monitor />} />
         <Route path="map" element={<Map />} />
+        <Route path="report" element={<Report />} />
       </Route>
     </Routes>
   );

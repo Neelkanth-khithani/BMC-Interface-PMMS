@@ -1,11 +1,21 @@
-import React, { useState } from "react";
-import sample_img from "../Images/frame_00502.jpg";
+import React, { useState, useEffect } from "react";
 
 function Monitor() {
     const [filters, setFilters] = useState({
         type: "",
         date: "",
     });
+
+    const [data, setData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
+    const [searched, setSearched] = useState(false);
+
+    useEffect(() => {
+        fetch("/detected_images/detected_objects_30_12_2024.json")
+            .then((response) => response.json())
+            .then((data) => setData(data))
+            .catch((error) => console.error("Error fetching data:", error));
+    }, []);
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -16,7 +26,19 @@ function Monitor() {
     };
 
     const handleSearch = () => {
-        console.log("Filters applied:", filters);
+        let filtered = data;
+        setSearched(true);
+
+        if (filters.type) {
+            filtered = filtered.filter((item) => item.Object.toLowerCase() === filters.type.toLowerCase());
+        }
+
+        if (filters.date) {
+            const formattedDate = filters.date.split("-").reverse().join("-"); // Convert "YYYY-MM-DD" to "DD-MM-YYYY"
+            filtered = filtered.filter((item) => item.Date === formattedDate);
+        }
+
+        setFilteredData(filtered);
     };
 
     return (
@@ -32,9 +54,9 @@ function Monitor() {
                             className="form-select"
                         >
                             <option value="">Select Type</option>
-                            <option value="streetVendor">Street Vendor</option>
+                            <option value="construction-material">Construction Material</option>
+                            <option value="street-vendor">Street Vendor</option>
                             <option value="tree">Tree</option>
-                            <option value="garbageBin">Garbage Bin</option>
                         </select>
                     </div>
 
@@ -57,86 +79,35 @@ function Monitor() {
                 </div>
             </div>
 
-            {/* Below Search - Pavement Image and Details */}
             <div className="mt-4">
-                <div className="row">
-                    {/* Image Section */}
-                    <div className="col-md-6">
-                        <div
-                            className="p-3"
-                            style={{
-                                backgroundColor: "#fff",
-                                border: "1px solid #ddd",
-                                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-                                height: "250px",
-                            }}
-                        >
-                            {/* Image with Clickable Modal Trigger */}
-                            <img
-                                src={sample_img}
-                                alt="Pavement"
-                                data-bs-toggle="modal"
-                                data-bs-target="#imageModal"
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                    cursor: "pointer",
-                                }}
-                            />
-                        </div>
-                    </div>
+                {searched && ( 
+                    filteredData.length === 0 ? (
+                        <p>No results found.</p>
+                    ) : (
+                        filteredData.map((item, index) => (
+                            <div className="row mb-4" key={index}>
+                                <div className="col-md-6">
+                                    <div className="p-3" style={{ backgroundColor: "#fff", border: "1px solid #ddd", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", height: "250px" }}>
+                                        <img
+                                            src={item.URL}
+                                            alt="Pavement"
+                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                        />
+                                    </div>
+                                </div>
 
-                    <div className="col-md-6">
-                        <div
-                            className="p-3"
-                            style={{
-                                backgroundColor: "#fff",
-                                border: "1px solid #ddd",
-                                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-                                height: "250px",
-                            }}
-                        >
-                            <h5>Description</h5>
-                            <p><strong>Longitude:</strong> 40.7128</p>
-                            <p><strong>Latitude:</strong> -74.0060</p>
-                            <p><strong>Type of Pavement Issue:</strong> Cracked Surface</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div
-                className="modal fade"
-                id="imageModal"
-                tabIndex="-1"
-                aria-labelledby="imageModalLabel"
-                aria-hidden="true"
-            >
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="imageModalLabel">Pavement Image</h5>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                            ></button>
-                        </div>
-                        <div className="modal-body">
-                            <img
-                                src={sample_img}
-                                alt="Pavement"
-                                style={{
-                                    width: "100%",
-                                    height: "auto",
-                                    objectFit: "contain",
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
+                                <div className="col-md-6">
+                                    <div className="p-3" style={{ backgroundColor: "#fff", border: "1px solid #ddd", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", height: "250px" }}>
+                                        <h5>Description</h5>
+                                        <p><strong>Longitude:</strong> {item.Longitude}</p>
+                                        <p><strong>Latitude:</strong> {item.Latitude}</p>
+                                        <p><strong>Type of Pavement Issue:</strong> {item.Object}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )
+                )}
             </div>
         </div>
     );

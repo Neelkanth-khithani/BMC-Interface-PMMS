@@ -1,0 +1,44 @@
+[
+    {
+        "Latitude": 19.05789,
+        "Longitude": 72.908751,
+        "Object": "construction-material",
+        "URL": "https://ik.imagekit.io/bmcpmms/30_12_2024/frame_01093_lat_19_detections.jpg",
+        "Date": "30-12-2024"
+    },
+    {
+        "Latitude": 19.055099,
+        "Longitude": 72.910944,
+        "Object": "street-vendor",
+        "URL": "https://ik.imagekit.io/bmcpmms/30_12_2024/frame_01645_lat_19_detections.jpg",
+        "Date": "30-12-2024"
+    },
+    {
+        "Latitude": 19.055099,
+        "Longitude": 72.910944,
+        "Object": "tree",
+        "URL": "https://ik.imagekit.io/bmcpmms/30_12_2024/frame_01825_lat_19_detections.jpg",
+        "Date": "30-12-2024"
+    },
+    {
+        "Latitude": 19.055074,
+        "Longitude": 72.910972,
+        "Object": "street-vendor",
+        "URL": "https://ik.imagekit.io/bmcpmms/30_12_2024/frame_02063_lat_19_detections.jpg",
+        "Date": "30-12-2024"
+    },
+    {
+        "Latitude": 19.055074,
+        "Longitude": 72.910972,
+        "Object": "street-vendor",
+        "URL": "https://ik.imagekit.io/bmcpmms/30_12_2024/frame_02064_lat_19_detections.jpg",
+        "Date": "30-12-2024"
+    },
+    {
+        "Latitude": 19.055074,
+        "Longitude": 72.910972,
+        "Object": "street-vendor",
+        "URL": "https://ik.imagekit.io/bmcpmms/30_12_2024/frame_02063_lat_19_detections.jpg",
+        "Date": "30-12-2024"
+    }
+]

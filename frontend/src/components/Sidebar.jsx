@@ -5,8 +5,8 @@ function Sidebar() {
     const { constituency } = useParams();
 
     return (
-        <div className="d-flex flex-column p-3 vh-100"
-            style={{ width: "250px", backgroundColor: "#F8F3D9" }}>
+        <div className="d-flex flex-column p-3 min-vh-100"
+            style={{ width: "250px", backgroundColor: "#F8F3D9", position: "sticky", top: 0 }}>
             <p className="text-center fw-bold" style={{ color: "#000" }}>Admin Navigation Panel</p>
             <ul className="nav nav-pills flex-column">
                 <li className="nav-item">
@@ -25,7 +25,7 @@ function Sidebar() {
                     </Link>
                 </li>
                 <li className="nav-item">
-                    <Link to="/report" className="nav-link fw-bold">
+                    <Link to={`/dashboard/${constituency}/report`} className="nav-link fw-bold">
                         Report to Authorities
                     </Link>
                 </li>

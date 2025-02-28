@@ -7,7 +7,7 @@ const testDB = async () => {
     } catch (err) {
         console.error(" Connection Error:", err.message);
     } finally {
-        pool.end(); // Close the connection pool
+        pool.end();
     }
 };
 
