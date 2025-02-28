@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
+import Papa from "papaparse";
 
 function Monitor() {
-    const [filters, setFilters] = useState({
-        type: "",
-        date: "",
-    });
-
+    const [filters, setFilters] = useState({ type: "", date: "" });
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [searched, setSearched] = useState(false);
 
+    const fetchCSVData = async (date) => {
+        if (!date) return;
+        const formattedDate = date.split("-").reverse().join("_"); // Convert YYYY-MM-DD to DD-MM-YYYY
+        const csvUrl = `https://pms-te-mp-review-1.s3.ap-south-1.amazonaws.com/daily-summary/${formattedDate}.csv`;
+
+        try {
+            const response = await fetch(csvUrl);
+            const csvText = await response.text();
+            Papa.parse(csvText, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (result) => {
+                    setData(result.data);
+                },
+            });
+        } catch (error) {
+            console.error("Error fetching CSV data:", error);
+        }
+    };
+
     useEffect(() => {
-        fetch("/detected_images/detected_objects_30_12_2024.json")
-            .then((response) => response.json())
-            .then((data) => setData(data))
-            .catch((error) => console.error("Error fetching data:", error));
-    }, []);
+        if (filters.date) fetchCSVData(filters.date);
+    }, [filters.date]);
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [name]: value,
-        }));
+        setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
     };
 
     const handleSearch = () => {
@@ -31,11 +42,6 @@ function Monitor() {
 
         if (filters.type) {
             filtered = filtered.filter((item) => item.Object.toLowerCase() === filters.type.toLowerCase());
-        }
-
-        if (filters.date) {
-            const formattedDate = filters.date.split("-").reverse().join("-"); // Convert "YYYY-MM-DD" to "DD-MM-YYYY"
-            filtered = filtered.filter((item) => item.Date === formattedDate);
         }
 
         setFilteredData(filtered);
@@ -47,65 +53,54 @@ function Monitor() {
                 <div className="row mb-3">
                     <div className="col-md-4">
                         <label className="form-label">Type of Pavement Object</label>
-                        <select
-                            name="type"
-                            value={filters.type}
-                            onChange={handleFilterChange}
-                            className="form-select"
-                        >
+                        <select name="type" value={filters.type} onChange={handleFilterChange} className="form-select">
                             <option value="">Select Type</option>
                             <option value="construction-material">Construction Material</option>
                             <option value="street-vendor">Street Vendor</option>
                             <option value="tree">Tree</option>
+
                         </select>
                     </div>
 
                     <div className="col-md-4">
                         <label className="form-label">Please Select Date</label>
-                        <input
-                            type="date"
-                            name="date"
-                            value={filters.date}
-                            onChange={handleFilterChange}
-                            className="form-control"
-                        />
+                        <input type="date" name="date" value={filters.date} onChange={handleFilterChange} className="form-control" />
                     </div>
 
                     <div className="col-md-4 d-flex align-items-end">
-                        <button onClick={handleSearch} className="btn btn-primary">
-                            Search
-                        </button>
+                        <button onClick={handleSearch} className="btn btn-primary">Search</button>
                     </div>
                 </div>
             </div>
 
             <div className="mt-4">
-                {searched && ( 
+                {searched && (
                     filteredData.length === 0 ? (
                         <p>No results found.</p>
                     ) : (
-                        filteredData.map((item, index) => (
-                            <div className="row mb-4" key={index}>
-                                <div className="col-md-6">
-                                    <div className="p-3" style={{ backgroundColor: "#fff", border: "1px solid #ddd", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", height: "250px" }}>
-                                        <img
-                                            src={item.URL}
-                                            alt="Pavement"
-                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                                        />
-                                    </div>
-                                </div>
+                        filteredData.map((item, index) => {
+                            const formattedDate = filters.date.split("-").reverse().join("_");
+                            const imageUrl = `https://pms-te-mp-review-1.s3.ap-south-1.amazonaws.com/roadside-detections/detections_${formattedDate}/${item["Image Name"]}`;
 
-                                <div className="col-md-6">
-                                    <div className="p-3" style={{ backgroundColor: "#fff", border: "1px solid #ddd", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", height: "250px" }}>
-                                        <h5>Description</h5>
-                                        <p><strong>Longitude:</strong> {item.Longitude}</p>
-                                        <p><strong>Latitude:</strong> {item.Latitude}</p>
-                                        <p><strong>Type of Pavement Issue:</strong> {item.Object}</p>
+                            return (
+                                <div className="row mb-4" key={index}>
+                                    <div className="col-md-6">
+                                        <div className="p-3" style={{ backgroundColor: "#fff", border: "1px solid #ddd", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", height: "250px" }}>
+                                            <img src={imageUrl} alt="Pavement" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-md-6">
+                                        <div className="p-3" style={{ backgroundColor: "#fff", border: "1px solid #ddd", boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)", height: "250px" }}>
+                                            <h5>Description</h5>
+                                            <p><strong>Longitude:</strong> {item.Longitude}</p>
+                                            <p><strong>Latitude:</strong> {item.Latitude}</p>
+                                            <p><strong>Type of Pavement Issue:</strong> {item.Object}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )
                 )}
             </div>
